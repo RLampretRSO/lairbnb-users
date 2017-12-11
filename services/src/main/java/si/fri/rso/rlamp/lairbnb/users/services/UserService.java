@@ -5,6 +5,7 @@ import com.kumuluz.ee.rest.utils.JPAUtils;
 import si.fri.rso.rlamp.lairbnb.users.models.Lair;
 import si.fri.rso.rlamp.lairbnb.users.models.Reservation;
 import si.fri.rso.rlamp.lairbnb.users.models.User;
+import si.fri.rso.rlamp.lairbnb.users.services.config.UserServiceConfig;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -22,6 +23,9 @@ public class UserService {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Inject
+    private UserServiceConfig userConfig;
 
     private Client httpClient = ClientBuilder.newClient();
     private String reservationsBaseUrl = "http://192.168.99.100:8082";
@@ -49,9 +53,11 @@ public class UserService {
         User user = em.find(User.class, userId);
 
         if (user != null) {
-            user.setReservations(this.getReservations(user.getId(), user.isHost()));
+            if (userConfig.isReservationServiceEnabled()) {
+                user.setReservations(this.getReservations(user.getId(), user.isHost()));
+            }
 
-            if (user.isHost()) {
+            if (user.isHost() && userConfig.isLairServiceEnabled()) {
                 user.setLairs(this.getLairs(user.getId()));
             }
         }
@@ -61,7 +67,9 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
-        if (user == null) return null;
+        if (!userConfig.isAllowRegisteringNewUsers() || user == null) {
+            return null;
+        }
         em.persist(user);
 
         return user;
@@ -82,6 +90,10 @@ public class UserService {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean deleteUser(Integer userId) {
+        if (!userConfig.isAllowDeletingUsers()) {
+            return false;
+        }
+
         User user = em.find(User.class, userId);
         if (user == null) return false;
 
