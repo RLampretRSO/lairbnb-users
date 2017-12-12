@@ -1,5 +1,6 @@
 package si.fri.rso.rlamp.lairbnb.users.services;
 
+import com.kumuluz.ee.discovery.annotations.DiscoverService;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import com.kumuluz.ee.rest.utils.JPAUtils;
 import si.fri.rso.rlamp.lairbnb.users.models.Lair;
@@ -17,6 +18,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.GenericType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequestScoped
 public class UserService {
@@ -28,8 +30,14 @@ public class UserService {
     private UserServiceConfig userConfig;
 
     private Client httpClient = ClientBuilder.newClient();
-    private String reservationsBaseUrl = "http://192.168.99.100:8082";
-    private String lairsBaseUrl = "http://192.168.99.100:8081";
+
+    @Inject
+    @DiscoverService(value = "lairbnb-reservations", version = "*", environment = "dev")
+    private Optional<String> reservationsBaseUrl;
+
+    @Inject
+    @DiscoverService(value = "lairbnb-lairs", version = "*", environment = "dev")
+    private Optional<String>lairsBaseUrl;
 
     public List<User> getAllUsers() {
         List<User> customers = em
@@ -107,14 +115,22 @@ public class UserService {
         if (asHost) {
             userIdField = "hostUserId";
         }
-        return httpClient.target(reservationsBaseUrl +
-                "/v1/reservations?filter=" + userIdField + ":EQ:" + userId.toString())
-                .request().get(new GenericType<List<Reservation>>(){});
+        if (reservationsBaseUrl.isPresent()){
+            return httpClient.target(reservationsBaseUrl.get() +
+                    "/v1/reservations?filter=" + userIdField + ":EQ:" + userId.toString())
+                    .request().get(new GenericType<List<Reservation>>(){});
+        }
+
+        return new ArrayList<Reservation>();
+
     }
 
     public List<Lair> getLairs(Integer userId) {
-        return httpClient.target(lairsBaseUrl +
+        if (lairsBaseUrl.isPresent()) {
+        return httpClient.target(lairsBaseUrl.get() +
                 "/v1/lairs?filter=ownerUserId:EQ:" + userId.toString())
                 .request().get(new GenericType<List<Lair>>(){});
+        }
+        return new ArrayList<Lair>();
     }
 }

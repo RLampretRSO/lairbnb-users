@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: users
-  rso-customers:
+  lairbnb-users:
     image: rlamp/lairbnb-users
     ports:
       - 8080:8080
