@@ -3,6 +3,7 @@ package si.fri.rso.rlamp.users.api.v1.resources;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import si.fri.rso.rlamp.lairbnb.users.models.User;
 import si.fri.rso.rlamp.lairbnb.users.services.UserService;
+import si.fri.rso.rlamp.lairbnb.users.services.config.UserServiceConfig;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -21,8 +22,12 @@ public class UserResource {
 
     @Context
     protected UriInfo uriInfo;
+
     @Inject
     private UserService userBean;
+
+    @Inject
+    private UserServiceConfig userConfig;
 
     @GET
     @Path("/all")
@@ -55,6 +60,10 @@ public class UserResource {
 
     @POST
     public Response addNewUser(User user) {
+        if (!userConfig.isAllowRegisteringNewUsers()){
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+
         userBean.createUser(user);
         return Response.noContent().build();
     }
@@ -69,6 +78,10 @@ public class UserResource {
     @DELETE
     @Path("/{userId}")
     public Response deleteUser(@PathParam("userId") Integer userId) {
+        if (!userConfig.isAllowDeletingUsers()){
+            return Response.status(Response.Status.NOT_MODIFIED).build();
+        }
+
         userBean.deleteUser(userId);
         return Response.noContent().build();
     }

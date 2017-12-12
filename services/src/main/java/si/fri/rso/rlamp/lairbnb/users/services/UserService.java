@@ -26,9 +26,9 @@ public class UserService {
     @PersistenceContext
     private EntityManager em;
 
+
     @Inject
     private UserServiceConfig userConfig;
-
     private Client httpClient = ClientBuilder.newClient();
 
     @Inject
@@ -37,7 +37,7 @@ public class UserService {
 
     @Inject
     @DiscoverService(value = "lairbnb-lairs", version = "*", environment = "dev")
-    private Optional<String>lairsBaseUrl;
+    private Optional<String> lairsBaseUrl;
 
     public List<User> getAllUsers() {
         List<User> customers = em
@@ -75,7 +75,7 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
-        if (!userConfig.isAllowRegisteringNewUsers() || user == null) {
+        if (user == null) {
             return null;
         }
         em.persist(user);
@@ -98,10 +98,6 @@ public class UserService {
 
     @Transactional(Transactional.TxType.REQUIRED)
     public boolean deleteUser(Integer userId) {
-        if (!userConfig.isAllowDeletingUsers()) {
-            return false;
-        }
-
         User user = em.find(User.class, userId);
         if (user == null) return false;
 
@@ -115,10 +111,11 @@ public class UserService {
         if (asHost) {
             userIdField = "hostUserId";
         }
-        if (reservationsBaseUrl.isPresent()){
+        if (reservationsBaseUrl.isPresent()) {
             return httpClient.target(reservationsBaseUrl.get() +
                     "/v1/reservations?filter=" + userIdField + ":EQ:" + userId.toString())
-                    .request().get(new GenericType<List<Reservation>>(){});
+                    .request().get(new GenericType<List<Reservation>>() {
+                    });
         }
 
         return new ArrayList<Reservation>();
@@ -127,9 +124,10 @@ public class UserService {
 
     public List<Lair> getLairs(Integer userId) {
         if (lairsBaseUrl.isPresent()) {
-        return httpClient.target(lairsBaseUrl.get() +
-                "/v1/lairs?filter=ownerUserId:EQ:" + userId.toString())
-                .request().get(new GenericType<List<Lair>>(){});
+            return httpClient.target(lairsBaseUrl.get() +
+                    "/v1/lairs?filter=ownerUserId:EQ:" + userId.toString())
+                    .request().get(new GenericType<List<Lair>>() {
+                    });
         }
         return new ArrayList<Lair>();
     }
