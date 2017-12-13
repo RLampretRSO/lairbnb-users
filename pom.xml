@@ -26,6 +26,7 @@
         <kumuluzee-discovery.version>1.1.0-SNAPSHOT</kumuluzee-discovery.version>
 
         <postgresql.version>42.1.4</postgresql.version>
+        <json.version>20171018</json.version>
     </properties>
 
     <dependencyManagement>
@@ -58,6 +59,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${postgresql.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.json</groupId>
+                <artifactId>json</artifactId>
+                <version>${json.version}</version>
             </dependency>
 
             <dependency>
