@@ -1,6 +1,7 @@
 package si.fri.rso.rlamp.users.api.v1.resources;
 
 import com.kumuluz.ee.rest.beans.QueryParameters;
+import org.eclipse.microprofile.metrics.annotation.Metered;
 import si.fri.rso.rlamp.lairbnb.users.models.User;
 import si.fri.rso.rlamp.lairbnb.users.services.UserService;
 import si.fri.rso.rlamp.lairbnb.users.services.config.UserServiceConfig;
@@ -37,6 +38,7 @@ public class UserResource {
     }
 
     @GET
+    @Metered
     public Response getCustomers() {
         List<User> customers = userBean.getUsers(createQuery());
         return Response.ok(customers).build();

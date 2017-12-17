@@ -25,8 +25,8 @@ kumuluzee:
     ping-interval: 15
   health:
     servlet:
-        mapping: /health
-        enabled: true
+      mapping: /health
+      enabled: true
     checks:
       data-source-health-check:
         jndi-name: jdbc/UsersDS
@@ -34,7 +34,19 @@ kumuluzee:
         connection-url: http://192.168.99.100:2379/health
       http-health-check:
         - connection-url: http://192.168.99.100:8081/v1/lairs
-        - connection-url: http://192.168.99.100:8082/v1/reservations
+          connection-url: http://192.168.99.100:8082/v1/reservations
+  metrics:
+    servlet:
+      enabled: true
+      mapping: /metrics
+    web-instrumentation:
+    - name: users-endpoint
+      url-pattern: /v1/users/*
+      status-codes: "200, 404, 500"
+    - name: demo-endpoint
+      url-pattern: /v1/demo/*
+      status-codes: "200"
+
 
 properties:
   external-services:

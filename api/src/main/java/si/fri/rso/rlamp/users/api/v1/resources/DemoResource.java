@@ -1,5 +1,6 @@
 package si.fri.rso.rlamp.users.api.v1.resources;
 
+import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import si.fri.rso.rlamp.lairbnb.users.models.User;
@@ -21,6 +22,7 @@ public class DemoResource {
 
     @GET
     @Path("/info")
+    @Counted(name = "demo_counter", monotonic = true)
     public Response getProjectInfo() {
         String json = new JSONObject()
                 .put("clani", new JSONArray().put("rl7811"))
