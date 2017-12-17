@@ -26,7 +26,6 @@ public class UserService {
     @PersistenceContext
     private EntityManager em;
 
-
     @Inject
     private UserServiceConfig userConfig;
     private Client httpClient = ClientBuilder.newClient();
@@ -61,13 +60,8 @@ public class UserService {
         User user = em.find(User.class, userId);
 
         if (user != null) {
-            if (userConfig.isReservationServiceEnabled()) {
-                user.setReservations(this.getReservations(user.getId(), user.isHost()));
-            }
-
-            if (user.isHost() && userConfig.isLairServiceEnabled()) {
-                user.setLairs(this.getLairs(user.getId()));
-            }
+            user.setReservations(this.getReservations(user.getId(), user.isHost()));
+            user.setLairs(this.getLairs(user.getId()));
         }
 
         return user;
@@ -107,11 +101,11 @@ public class UserService {
     }
 
     public List<Reservation> getReservations(Integer userId, boolean asHost) {
-        String userIdField = "userUserId";
-        if (asHost) {
-            userIdField = "hostUserId";
-        }
-        if (reservationsBaseUrl.isPresent()) {
+        if (userConfig.isReservationServiceEnabled() && reservationsBaseUrl.isPresent()) {
+            String userIdField = "userUserId";
+            if (asHost) {
+                userIdField = "hostUserId";
+            }
             return httpClient.target(reservationsBaseUrl.get() +
                     "/v1/reservations?filter=" + userIdField + ":EQ:" + userId.toString())
                     .request().get(new GenericType<List<Reservation>>() {
@@ -119,11 +113,10 @@ public class UserService {
         }
 
         return new ArrayList<Reservation>();
-
     }
 
     public List<Lair> getLairs(Integer userId) {
-        if (lairsBaseUrl.isPresent()) {
+        if (userConfig.isLairServiceEnabled() && lairsBaseUrl.isPresent()) {
             return httpClient.target(lairsBaseUrl.get() +
                     "/v1/lairs?filter=ownerUserId:EQ:" + userId.toString())
                     .request().get(new GenericType<List<Lair>>() {
