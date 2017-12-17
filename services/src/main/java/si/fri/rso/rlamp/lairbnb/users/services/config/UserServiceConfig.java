@@ -21,6 +21,9 @@ public class UserServiceConfig {
     @ConfigValue(value = "service.persistence.delete.allowed", watch = true)
     private boolean allowDeletingUsers;
 
+    @ConfigValue(value = "service.healthy", watch = true)
+    private boolean healthy;
+
     public boolean isReservationServiceEnabled() {
         return reservationServiceEnabled;
     }
@@ -51,5 +54,13 @@ public class UserServiceConfig {
 
     public void setAllowDeletingUsers(boolean allowDeletingUsers) {
         this.allowDeletingUsers = allowDeletingUsers;
+    }
+
+    public boolean isHealthy() {
+        return healthy;
+    }
+
+    public void setHealthy(boolean healthy) {
+        this.healthy = healthy;
     }
 }

@@ -23,6 +23,18 @@ kumuluzee:
       hosts: http://192.168.99.100:2379
     ttl: 20
     ping-interval: 15
+  health:
+    servlet:
+        mapping: /health
+        enabled: true
+    checks:
+      data-source-health-check:
+        jndi-name: jdbc/UsersDS
+      etcd-health-check:
+        connection-url: http://192.168.99.100:2379/health
+      http-health-check:
+        - connection-url: http://192.168.99.100:8081/v1/lairs
+        - connection-url: http://192.168.99.100:8082/v1/reservations
 
 properties:
   external-services:
@@ -31,6 +43,7 @@ properties:
     lair-service:
       enabled: true
   service:
+    healthy: true
     persistence:
       create:
         allowed: true
