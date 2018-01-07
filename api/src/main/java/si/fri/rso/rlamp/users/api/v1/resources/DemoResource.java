@@ -1,5 +1,6 @@
 package si.fri.rso.rlamp.users.api.v1.resources;
 
+import com.kumuluz.ee.logs.cdi.Log;
 import org.eclipse.microprofile.metrics.annotation.Counted;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+@Log
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)

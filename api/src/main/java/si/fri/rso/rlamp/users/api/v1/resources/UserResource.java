@@ -1,5 +1,6 @@
 package si.fri.rso.rlamp.users.api.v1.resources;
 
+import com.kumuluz.ee.logs.cdi.Log;
 import com.kumuluz.ee.rest.beans.QueryParameters;
 import org.eclipse.microprofile.metrics.annotation.Metered;
 import si.fri.rso.rlamp.lairbnb.users.models.User;
@@ -15,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
+@Log
 @RequestScoped
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
