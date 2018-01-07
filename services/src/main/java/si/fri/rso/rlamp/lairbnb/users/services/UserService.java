@@ -38,6 +38,10 @@ public class UserService {
     @DiscoverService(value = "lairbnb-lairs", version = "*", environment = "dev")
     private Optional<String> lairsBaseUrl;
 
+    @Inject
+    @DiscoverService(value = "lairbnb-notifications", version = "*", environment = "dev")
+    private Optional<String> notificationsBaseUrl;
+
     public List<User> getAllUsers() {
         List<User> customers = em
                 .createNamedQuery("User.findAll", User.class)
@@ -74,6 +78,13 @@ public class UserService {
         }
         em.persist(user);
 
+        if (notificationsBaseUrl.isPresent()) {
+            httpClient.target(notificationsBaseUrl.get() +
+                    String.format("/v1/notify?type=welcome&name=%s&addr=%s",
+                            String.format("%s %s", user.getFirstName(), user.getLastName()),
+                            user.getEmailAddress()))
+                    .request().post(null);
+        }
         return user;
     }
 
