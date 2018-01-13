@@ -80,9 +80,8 @@ public class UserService {
 
         if (notificationsBaseUrl.isPresent()) {
             httpClient.target(notificationsBaseUrl.get() +
-                    String.format("/v1/notify?type=welcome&name=%s&addr=%s",
-                            String.format("%s %s", user.getFirstName(), user.getLastName()),
-                            user.getEmailAddress()))
+                    String.format("/v1/notify?type=welcome&name=%s+%s&addr=%s",
+                            user.getFirstName(), user.getLastName(), user.getEmailAddress()))
                     .request().post(null);
         }
         return user;
