@@ -31,10 +31,16 @@ kumuluzee:
       data-source-health-check:
         jndi-name: jdbc/UsersDS
       etcd-health-check:
-        connection-url: http://192.168.99.100:2379/health
+        - connection-url: http://localhost:2379/health
+          connection-url: http://192.168.99.100:2379/health
+          connection-url: http://etcd:2379/health
       http-health-check:
         - connection-url: http://192.168.99.100:8081/v1/lairs
-          connection-url: http://192.168.99.100:8082/v1/reservations
+          connection-url: http://localhost:8081/v1/lairs
+          connection-url: http://lairs:8081/v1/lairs
+        - connection-url: http://192.168.99.100:8082/v1/reservations
+          connection-url: http://localhost:8082/v1/reservations
+          connection-url: http://reservations:8082/v1/reservations
   metrics:
     servlet:
       enabled: true
