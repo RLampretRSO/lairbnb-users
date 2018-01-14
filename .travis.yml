@@ -14,7 +14,7 @@ cache:
   - $HOME/.m2
 
 env:
-  - DOCKER_IMAGE=rlamp/lairbnb-users:0.4
+  - DOCKER_IMAGE=rlamp/lairbnb-users:0.4.1
 
 script:
   - mvn clean package -U
